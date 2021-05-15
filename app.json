@@ -1,0 +1,12 @@
+{
+  "name": "vot",
+  "displayName": "vot",
+  "expo": {
+    "name": "vot",
+    "slug": "vot",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
