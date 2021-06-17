@@ -27,15 +27,23 @@ export const fetchVote = async (value) => {
   }
 }
 export const setUserData = async (dispatch,user) => {
-        dispatch({type:USER_DATA,payload:user})
     axios.defaults.headers.common['Authorization'] = (await AsyncStorage.getItem('token'))
-
-
+    dispatch({type:USER_DATA,payload:user.data})
 }
 
-export const getAllVote = async (dispatch) => {
+export const unAuthorized = async (dispatch,statusCode) => {
+if(statusCode =='401'){
+  logout(dispatch)
+}
+}
+  export const getAllVote = async (dispatch) => {
   Api()
-  .get("/vote/allElection")
+  .get("/vote/allElection",
+  // {headers:{
+  //   Authorization:  await AsyncStorage.getItem('token')
+
+  // }}
+  )
   .then(async(res) => {
     // console.log(res.data.data)
     dispatch({
@@ -46,33 +54,43 @@ export const getAllVote = async (dispatch) => {
     });
   })
   .catch((e) => {
-    console.log(e.response)
+    console.log('error')
+    // console.log('error',e.response.status)
+    // unAuthorized(dispatch,e.response.status)
+
 
 
   })
 
 }
 // 
-export const login =(formData, dispatch,navigation) => {
+export const Vote =(formData, dispatch,navigation) => {
+ Api()
+    .post("/vote", formData)
+    .then((res)=>{})
+    .catch((e)=>{})
+}
+  export const login =(formData, dispatch,navigation) => {
     Api()
     .post("/user/login", formData)
     .then(async(res) => {
       if (res.data.success === true) {
-        console.log('res')
+        console.log(res.data.data.user)
     await AsyncStorage.setItem('token', res.data.data.token)
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.data.token}`;
-        dispatch({
+    dispatch({
           type: LOGIN_SUCCESS,
           payload: {
             user: res.data.data.user,
             token: res.data.data.token,
           },
         });
-        // navigation.push("Home")
+        navigation.push("Home")
+    await getUserProfile(dispatch)    
+
       }
     })
     .catch((e) => {
-      console.log(e.response)
       dispatch({
         type: LogOut,
         payload: {
@@ -83,9 +101,7 @@ export const login =(formData, dispatch,navigation) => {
     });
 };
 export const logout =async (dispatch,navigation) => {
-  // await AsyncStorage.removeItem('token')
-  console.log('japa')
-  console.log(  await AsyncStorage.getItem('token'))
+  await AsyncStorage.removeItem('token')
   dispatch({
     type: LogOut,
     payload: {
@@ -122,22 +138,25 @@ export const setStateError = (dispatch) => {
 export const setStateSuccess = (dispatch) => {
   dispatch({ type: SUCCESS, payload: "" });
 };
-export const getUserProfile= (dispatch,history)=>{
-  if(localStorage.getItem("token")){
-    if(localStorage.getItem("token").startsWith('Bearer ')){
-      Api().get("/user/get_profile")
+export const getUserProfile= async(dispatch,history,tok)=>{
+  let t = await AsyncStorage.getItem('token')
+      Api().get("/user/get_profile"
+      ,{headers:{
+        Authorization: t
+      }}
+      )
+      
       .then(auth=>{
         console.log(auth.data.data)
-        // dispatch({type:USER_DATA,payload:auth.data.data})
+        dispatch({type:USER_DATA,payload:auth.data.data,user: res.data.data.user})
       }
         )
       .catch(e=>{
-        console.log(e.response.data)
-  // localStorage.removeItem("token")
+    unAuthorized(dispatch,e?.response?.status)
+
       })
-    }else{
-  // localStorage.removeItem("token")
-    }}}
+  
+  }
 
 // export const Verify_otp= (formData,dispatch,history)=>{
 // console.log(formData)

@@ -4,7 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Text,View,StyleSheet, Image} from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-export default function EachResult({item,vote}) {
+import {
+    Vote
+  } from "../../store/action/authAction";
+export default function EachResult({item,vote,result}) {
+    const VOTE=(voter_id,vote_type_id)=>{
+        if(!result){
+            Vote({voter_id,vote_type_id})
+        }
+    }
     return (
                 <View style={styles.eachrole}>
 <Ionicons
@@ -15,11 +23,13 @@ export default function EachResult({item,vote}) {
                 <Text style={styles.dept}>{item.dept} </Text>
 
                     </View>
-                    {vote?
+                    {result!==true?
                     <TouchableOpacity activeOpacity={.5}>
-                    <Text style={styles.vote}>Vote</Text>
+                    <Text
+                    onPress={()=>{VOTE(item._id,item.vote_type_id)}}
+                    style={styles.vote}>Vote</Text>
                     </TouchableOpacity>
-                    :<Text style={styles.count}>{item.count}</Text>}
+                    :<Text style={styles.vote}>{item.score}</Text>}
 
 
 

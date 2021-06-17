@@ -3,15 +3,17 @@ import React ,{useState} from 'react'
 import EachpersonResult from '../../ElectionResult/EachpersonResult.js'
 import { Text,View,StyleSheet, ScrollView,Image,FlatList} from 'react-native'
 import { useEffect } from 'react'
-const  EachResult=({post}) =>{
-   
+const  EachResult=({post,result}) =>{
+  //  console.log(result)
+  //  bb.push([{id:JSON.stringify(i)},{post:each.post},{candidate:aaa}])
+
     return (
         <View style={styles.result}>
         <View style={styles.each}>
-        <Text style={styles.title}>{post.post}</Text>
+        <Text style={styles.title}>{post[1].post}</Text>
         <FlatList
-            data={post.result}
-            renderItem={({item})=> <EachpersonResult vote={'vote'} item={item}/>}
+            data={post[2].candidate}
+            renderItem={({item})=> <EachpersonResult result={result} vote={'vote'} item={item}/>}
             keyExtractor={(item)=>item.id} />
         </View>
         </View>
@@ -37,114 +39,52 @@ title:{
 }
    
 })
-const Eachresult=({route})=>{
-//  console.log(route.params.data.data)
+const Eachresult=({route,result})=>{
+ const res = (route?.params.action == 'Result')
+//  console.log(res)
+
   const [ALLPOST,setALLPOST] = useState([])
-    const post =[
-        {id:'1',
-          post:'President',
-          result :[
-            {id:'1',
-              name:'LASUSU',
-              dept:'Science',
-              count:'79',
-            },
-            {
-              id:'2',
-              name:'ESLASU',
-              dept:'Agric',
-              count:'32',
-            },
-            {
-              id:'3',
-              name:'AGRIC',
-              dept:'Engineering',
-              count:'97',
-            },
-            {
-              id:'4',
-              name:'AGRIC',
-              dept:'Engineering',
-              count:'97',
-            },
-            {
-              id:'5',
-              name:'AGRIC',
-              dept:'Engineering',
-              count:'97',
-            },
-          ]
-        },
-        {
-          id:'2',
-          post:' General secretary',
-          result :[
-            {id:'1',
-              name:'FMSLASU',
-              dept:'Science',
-              count:'79',
-            },
-            {
-              id:'2',
-              name:'ESLASU',
-              dept:'Agric',
-              count:'11',
-            },
-            {
-              id:'3',
-              name:'AGRIC',
-              dept:'Engineering',
-              count:'44',
-            },
-          ]
-        },
-     
-      ]
       useEffect(()=>{
+        console.log(route?.params?.data?.data[1].lenght==0)
       let aa=[]
-      route.params.data.data[1].forEach((each)=>{
-
+      let bb=[]
+      let i=0
+      route?.params?.data?.data[1]?.forEach((each)=>{
+i++
         if(!aa.includes(each.post)){
-          // aa.push(each.post)
+          aa.push(each.post)
 
-        let aaa=   route.params.data.data[1].filter((num)=>{
-          
+        let aaa=   route?.params?.data?.data[1]?.filter((num)=>{
           return num.post==each.post
-
         })
+        bb.push([{id:JSON.stringify(i)},{post:each.post},{candidate:aaa}])
         
-        if(!aa.includes({post:each.post,candidate:aaa})){
-        aa.push({post:each.post,candidate:aaa})
-
-        }
-        // console.log(route.params.data.data)
-        //  console.log(aa)
         }
       })
-      setALLPOST(aa)
-      console.log(aa)
-
-
-
+      route?.params?.data?.data[1]?.forEach((eachdata)=>{
+        let aaa=   route?.params?.data?.data[1]?.filter((num)=>{
+          return num.post == eachdata.post
+        })
+      })
+      setALLPOST(bb)
       },[])
       return (
           <View>
-            <Text>
-              {/* {route.params.data.data[2].post} */}
+            {route?.params?.data?.data[1]?.lenght==0?
+            <Text 
+            style={{fontSize:33}}>
+              NO VOTING 
             </Text>
-              <FlatList
-            data={post}
-            renderItem={({item})=> <EachResult post={item}/>}
-            keyExtractor={(item)=>item.id} />
+            :
             
-            {/* <FlatList
-            data={route.params.data.data}
-            renderItem={({item})=> <EachResult post={item}/>}
-            keyExtractor={(item)=>item._id} /> */}
+              <FlatList
+            data={ALLPOST}
+            renderItem={({item})=> <EachResult result={res} post={item}/>}
+            keyExtractor={(item)=>item[0].id} />}
           </View>
 
       )
 
 }
 
-export default Eachresult
+export default Eachresult;

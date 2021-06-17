@@ -1,14 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './style.jsx';
 import CustomButton from '../../partials/button';
 import Api from '../../store/api';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
 import { TouchableOpacity,TouchableWithoutFeedback } from 'react-native-gesture-handler'
-
+import {
+  getAllVote
+  } from "../../store/action/authAction";
+import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function HomeScreen({navigation}) {
 // const navigation=useNavigation();
+const dispatch=useDispatch();
 // import { useNavigation } from '@react-navigation/native';
 
   const election = ()=>{
@@ -18,12 +23,14 @@ export default function HomeScreen({navigation}) {
       })
   }
   const result = ()=>{
-    navigation.navigate('AllResultScreen',{
+    navigation.navigate('OngoingScreen',{
       name:'Election Result',
       action:'Election Result'
     })
-      
   }
+  useEffect(()=>{
+    
+  },[])
   return (
     <View style={styles.container}>
       <View style={styles.Election}>

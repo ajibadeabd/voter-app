@@ -37,8 +37,6 @@ const Allapps = () => {
   useEffect(() => {
 
     const getToken = async () => {
-    // await AsyncStorage.removeItem('token')
-
       try {
         const t = await AsyncStorage.getItem("token");
         if(t){

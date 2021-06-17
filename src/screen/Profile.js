@@ -10,18 +10,22 @@ import { useNavigation } from "@react-navigation/native";
 export default function LoginScreen({navigation}) {
   const dispatch =useDispatch();
   // const navigation =useNavigation();
-  console.log('worked');
-
+  const { userData } = useSelector((state) => state?.auth);
+// console.log(userData)
   return (
     <View style={styles.container}>
         
 <Ionicons  name="people-circle-sharp"
 onPress={()=>{navigation.navigate("Profile")}} 
  size={250} color='#6C63FF' />
-      <Text style={styles.name}>Abdullah Ajibade</Text>
+      <Text style={styles.name}>Name:{userData?.fullName}</Text>
       <Text style={styles.emailcon}>
           <Text style={styles.email}>Email:</Text>
-           Ajibadeabd@gmail.com</Text>
+           {userData?.email}
+           </Text>
+           <Text style={styles.emailcon}>
+          <Text style={styles.email}>Matric number: </Text>
+           {userData.matric_number}</Text>
             <TouchableOpacity>
 
            <Text
