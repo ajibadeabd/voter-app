@@ -12,22 +12,27 @@ import {
   OTP_SUCCESS,
   OTP_ERROR,
   PRODUCT_FETCH_SUCCESS,
+  VOTE_CASTED,
 } from "./types";
 import Api from "../api";
 import axios from "axios";
+import { showMessage, hideMessage } from "react-native-flash-message";
+
+
+import {Display} from "../../partials/flashMessage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export const fetchVote = async (value) => {
   
-  Api()
-    .get("/vote")
-  try {
-    await AsyncStorage.setItem('token', value)
-  } catch (e) {
-    // saving error
-  }
+  // Api()
+  //   .get("/vote")
+  // try {
+  //   await AsyncStorage.setItem('token', value)
+  // } catch (e) {  
+  //   // saving error
+  // }
 }
 export const setUserData = async (dispatch,user) => {
-    axios.defaults.headers.common['Authorization'] = (await AsyncStorage.getItem('token'))
+    // axios.defaults.headers.common['Authorization'] = (await AsyncStorage.getItem('token'))
     dispatch({type:USER_DATA,payload:user.data})
 }
 
@@ -39,10 +44,6 @@ if(statusCode =='401'){
   export const getAllVote = async (dispatch) => {
   Api()
   .get("/vote/allElection",
-  // {headers:{
-  //   Authorization:  await AsyncStorage.getItem('token')
-
-  // }}
   )
   .then(async(res) => {
     // console.log(res.data.data)
@@ -54,21 +55,54 @@ if(statusCode =='401'){
     });
   })
   .catch((e) => {
-    console.log('error')
-    // console.log('error',e.response.status)
-    // unAuthorized(dispatch,e.response.status)
-
-
-
+    console.log(e.response.data)
   })
 
 }
-// 
-export const Vote =(formData, dispatch,navigation) => {
+export const getCastedVote =async(dispatch) => {
+  Api()
+    .get("/vote/getCastedVote")
+    .then((res)=>{
+      // console.log(res.data.data)
+    dispatch({
+      type: VOTE_CASTED,
+      payload: {
+        voteCasted:res.data.data
+      },
+    });
+    })
+    .catch((e)=>{
+      console.log(e)
+    })
+}
+  export const Vote =async(formData, dispatch) => {
  Api()
-    .post("/vote", formData)
-    .then((res)=>{})
-    .catch((e)=>{})
+    .post("/vote", formData,
+    )
+    .then((auth)=>{
+      dispatch({
+        type: VOTE_CASTED,
+        payload: {
+          voteCasted:auth.data.data
+        },
+      });
+      showMessage({
+        message: auth.data.message ,
+        type: "success",
+        duration:2000,
+        color:'white',
+        position:'bottom',
+      });
+    })
+    .catch((e)=>{
+      showMessage({
+        message: e.response.data.message ,
+        type: "danger",
+        duration:2000,
+        color:'white',
+        position:'bottom',
+      });
+    })
 }
   export const login =(formData, dispatch,navigation) => {
     Api()
@@ -77,7 +111,17 @@ export const Vote =(formData, dispatch,navigation) => {
       if (res.data.success === true) {
         console.log(res.data.data.user)
     await AsyncStorage.setItem('token', res.data.data.token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.data.token}`;
+    axios.defaults.headers.common['Authorization'] = `${res.data.data.token}`;
+    showMessage({
+      message: res.data.message ,
+      type: "success",
+      duration:2000,
+      color:'white',
+      position:'bottom',
+      // backgroundColor:'green'
+    });
+    // await getUserProfile(dispatch)    
+
     dispatch({
           type: LOGIN_SUCCESS,
           payload: {
@@ -85,12 +129,19 @@ export const Vote =(formData, dispatch,navigation) => {
             token: res.data.data.token,
           },
         });
-        navigation.push("Home")
-    await getUserProfile(dispatch)    
-
+        // navigation.push("Home")
+    // await getUserProfile(dispatch)    
       }
     })
     .catch((e) => {
+      showMessage({
+        message: e.response.data.message ,
+        type: "danger",
+        duration:2000,
+        color:'white',
+        position:'bottom',
+        // backgroundColor:'green'
+      });
       dispatch({
         type: LogOut,
         payload: {
@@ -102,6 +153,14 @@ export const Vote =(formData, dispatch,navigation) => {
 };
 export const logout =async (dispatch,navigation) => {
   await AsyncStorage.removeItem('token')
+  showMessage({
+    message: "logged out successfully" ,
+    type: "success",
+    duration:2000,
+    color:'white',
+    position:'bottom',
+    // backgroundColor:'green'
+  });
   dispatch({
     type: LogOut,
     payload: {
@@ -116,17 +175,33 @@ export const register = (formData, dispatch, nav) => {
     .post("/user/register", formData)
     .then((auth) => {
       if (auth.data.success === true) {
-        nav.push("Otp", {
-          params: {
-            email: formData.email,
-          },
+          showMessage({
+          message: auth.data.message ,
+          type: "success",
+          duration:2000,
+          color:'white',
+          position:'bottom',
+          backgroundColor:'green'
         });
+        nav.push("Login"
+        // , {
+        //   params: {
+        //     email: formData.email,
+        //   },
+        // }
+        );
         dispatch({ type: REGISTER_SUCCESS, payload: auth.data.message });
       }
     })
     .catch((e) => {
-      console.log(e.response.data);
-
+      console.log(e.response.data.message);
+      showMessage({
+        message: e.response.data.message ,
+        type: "danger",
+        duration:2000,
+        color:'white',
+        position:'bottom',
+      });
       dispatch({ type: REGISTER_ERROR, payload: e.response?.data.message });
     });
 };
@@ -141,14 +216,17 @@ export const setStateSuccess = (dispatch) => {
 export const getUserProfile= async(dispatch,history,tok)=>{
   let t = await AsyncStorage.getItem('token')
       Api().get("/user/get_profile"
-      ,{headers:{
-        Authorization: t
-      }}
       )
-      
       .then(auth=>{
-        console.log(auth.data.data)
-        dispatch({type:USER_DATA,payload:auth.data.data,user: res.data.data.user})
+    dispatch({
+          type: LOGIN_SUCCESS,
+          payload: {
+            user: auth.data.data.user,
+            // token: res.data.data.token,
+          },
+        });
+        return 
+        // dispatch({type:USER_DATA,payload:auth.data.data,user: res.data.data.user})
       }
         )
       .catch(e=>{

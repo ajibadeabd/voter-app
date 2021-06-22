@@ -9,10 +9,12 @@ import {
   Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import  {Display} from "../partials/flashMessage";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomButton from "../partials/button.jsx";
 import Api from "../store/api";
 import axios from "axios";
+import { showMessage, hideMessage } from "react-native-flash-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Form({ navigation }) {
@@ -69,10 +71,18 @@ export default function Form({ navigation }) {
         />
       </TouchableOpacity>
       <TouchableOpacity>
-      <CustomButton
+      {/* <CustomButton
             button_name="test"
             onPress={async() => {
-              console.log('sdfsswde')
+              // showMessage({
+              //   message: "Hello World",
+              //   type: "success",
+              //   duration:2000,
+              //   color:'black',
+              //   position:'bottom',
+              //   backgroundColor:"lightgrey"
+              // });
+              Display('llll')
               // https://lasu-voter.herokuapp.com/api/v1/user/login
               Api().get('/user/get_profile',
              { headers:{ 
@@ -89,7 +99,7 @@ export default function Form({ navigation }) {
               .catch((e)=>{console.log(e?.response?.data || e)})
             }}
 
-      />
+      /> */}
       </TouchableOpacity>
         <TouchableOpacity>
           <CustomButton

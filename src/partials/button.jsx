@@ -25,6 +25,6 @@ const Styles = StyleSheet.create({
     marginTop: "5%",
     marginBottom: "5%",
   },
-});
+}); 
 
 export default ButtonInput;

@@ -109,7 +109,6 @@ export default function Form({ navigation, route }) {
             </Text>
           </View>
           <View>
-            <ErrorHandler />
             <CustomTextInput
               onChangeText={changeEmail}
               placeholder="Enter your email"

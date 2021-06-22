@@ -1,28 +1,58 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './styles.jsx';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { showMessage, hideMessage } from "react-native-flash-message";
 
+import {
+  getCastedVote
+} from "../../store/action/authAction";
+import { useDispatch, useSelector } from "react-redux";
 export default function HomeScreen({eachItem,result,navigation}) {
-  // console.log(result == 'Election Result')
+const dispatch = useDispatch()
+if(eachItem?.data){
   const check = (result == 'Election Result')
-  // console.log(check)
-
-
   const onpress=()=>{
-    // let act = {check?'result':'Election'}
     if(!check){
-      
+      if(eachItem?.data[1].length!=0){
     navigation.navigate('StartVote',{action:'Election',
-    data:eachItem})
+    id:eachItem.id})}
+    else{
+showMessage({
+  message: `No election for this section` ,
+  type: "danger",
+  duration:2000,
+  color:'white',
+  position:'bottom',
+  // backgroundColor:'green'
+})
+
+    }
   }else{
+    if(eachItem?.data[1].length!=0){
     navigation.navigate('StartVote',{action:'Result',
-    data:eachItem})
+    id:eachItem.id})
+  }else{
+    showMessage({
+      message: `No Result for this section` ,
+      type: "danger",
+      duration:2000,
+      color:'white',
+      position:'bottom',
+      // backgroundColor:'green'
+    })
   }
+}
+// }else{
+  ;
+// }
 
   }
+  useEffect(()=>{
+getCastedVote(dispatch)
+  },[])
   return (
       <View style={styles.Election}>
       <Text style={styles.ongoing}>
@@ -47,4 +77,10 @@ export default function HomeScreen({eachItem,result,navigation}) {
       </Text>
       </View>
   );
+}else{
+return (
+  // <Text>loading</Text>
+  null
+)
+}
 }

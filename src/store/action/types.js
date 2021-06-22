@@ -11,3 +11,4 @@ export const PRODUCT_FETCH_SUCCESS="PRODUCT_FETCH_SUCCESS";
 export const ADMIN_DASH="ADMIN_DASH";
 export const LogOut="LogOut";
 export const VOTEER_SUCCES="VOTEER_SUCCES";
+export const VOTE_CASTED="VOTE_CASTED";

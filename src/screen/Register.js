@@ -136,7 +136,7 @@ export default function Form({ navigation }) {
             >
               Create Account
             </Text>
-            <ErrorHandler error={error} />
+            {/* <ErrorHandler error={error} /> */}
             {/* <Text style={{ fontSize: 14, color: "red" }}>{error}</Text>
             <Text style={{ fontSize: 14, color: "green" }}>{success}</Text> */}
           </View>

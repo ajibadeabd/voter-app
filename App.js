@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-
+import FlashMessage from "react-native-flash-message";
 import Profile from "./src/screen/Profile";
 import Login from "./src/screen/Login";
 import Register from "./src/screen/Register";
@@ -41,9 +41,7 @@ const Allapps = () => {
         const t = await AsyncStorage.getItem("token");
         if(t){
           let getProfile =await Api().get('/user/get_profile',
-          {headers:{
-            Authorization: t
-          }})
+          )
           if(getProfile){
             await setUserData(dispatch,getProfile?.data)
           }
@@ -56,7 +54,10 @@ const Allapps = () => {
   return (
     <NavigationContainer>
       {userData ? <AuthUser /> : <NotAuthUser />}
+      <FlashMessage position="center" />
+
     </NavigationContainer>
+    
   );
 };
 // }

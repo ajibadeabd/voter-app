@@ -1,9 +1,14 @@
 import {LOGIN_ERROR,ERROR,SUCCESS,PRODUCT_FETCH_SUCCESS,LogOut,
-    REGISTER_SUCCESS,REGISTER_ERROR,OTP_SUCCESS,ADMIN_DASH,
+    REGISTER_SUCCESS,REGISTER_ERROR,OTP_SUCCESS,ADMIN_DASH,VOTE_CASTED,
     USER_DATA,LOGIN_SUCCESS, OTP_ERROR,VOTEER_SUCCES} from '../action/types'
 import {initialState} from '../state/stateManagement'
 const auth=(state=initialState,action)=>{
 switch(action.type){
+        case VOTE_CASTED:
+        return{
+            ...state,
+            voteCasted:action.payload.voteCasted,
+        }
         case LOGIN_ERROR:
         return{
             ...state,
